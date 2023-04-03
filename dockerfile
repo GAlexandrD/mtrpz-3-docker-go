@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine
+FROM golang:1.20-alpine as build
 
 WORKDIR /app
 
@@ -10,4 +10,8 @@ COPY . .
 
 RUN go build -o ./build/fizzbuzz
 
-CMD [ "./build/fizzbuzz", "serve" ]
+FROM scratch
+COPY --from=build /app/build/fizzbuzz /fizzbuzz
+COPY --from=build /app/templates /templates
+
+CMD [ "./fizzbuzz", "serve" ]
